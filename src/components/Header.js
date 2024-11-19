@@ -12,7 +12,11 @@ import {
 import Link from "next/link"
 // import { Button } from "react-day-picker";
 import { Button } from "@/components/ui/button"
+<<<<<<< HEAD
+import { auth, signOut } from "@/auth";
+=======
 import { auth } from "@/auth";
+>>>>>>> df3692ed0a421e9a2c370a270e7315c3bb8a3819
 import Image from "next/image";
 export default async function  Header(){
   let session = await auth();
@@ -45,7 +49,16 @@ export default async function  Header(){
       <Link href={'/Appointments'}>
       <MenubarItem>My Appointments</MenubarItem>
       </Link>
-      <MenubarItem>LogOut</MenubarItem>
+      <form
+      action={async () => {
+        "use server"
+        await signOut("google")
+      }}
+    >
+        <Button variant='outline'>LogOut</Button>
+    </form>
+
+      
     </MenubarContent>
   </MenubarMenu>
 </Menubar>
