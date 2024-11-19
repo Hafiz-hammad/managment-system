@@ -11,9 +11,9 @@ import {
 // import { Link } from "lucide-react"
 import Link from "next/link"
 // import { Button } from "react-day-picker";
-import { TypeOutline } from "lucide-react";
 import { Button } from "@/components/ui/button"
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
+import Image from "next/image";
 export default async function  Header(){
   let session = await auth();
   // session = null;
@@ -28,13 +28,13 @@ export default async function  Header(){
   session ?
 <Menubar>
   <MenubarMenu>
-    <MenubarTrigger className="border-none">
-        
-    <Avatar>
-  <AvatarImage src="https://github.com/shadcn.png" />
-  <AvatarFallback>DAS</AvatarFallback>
-</Avatar>
-
+    <MenubarTrigger className="border-none  bg-transparent p-0 m-0">
+        <Image src={session?.user?.image}
+        height={40}
+        width={40}
+        className="rounded-full"
+        />
+          
          </MenubarTrigger>
     <MenubarContent>
       <MenubarSeparator />
@@ -45,7 +45,16 @@ export default async function  Header(){
       <Link href={'/Appointments'}>
       <MenubarItem>My Appointments</MenubarItem>
       </Link>
-      <MenubarItem>LogOut</MenubarItem>
+      <form
+      action={async () => {
+        "use server"
+        await signOut("google")
+      }}
+    >
+        <Button variant='outline'>LogOut</Button>
+    </form>
+
+      
     </MenubarContent>
   </MenubarMenu>
 </Menubar>
