@@ -1,7 +1,9 @@
 import Image from "next/image"
 import { Button } from "./ui/button"
 import Link from "next/link"
-export default function HeroSection(){
+import { auth } from "@/auth"
+export default async function HeroSection(){
+  const session = await auth();
     return(
         <section className="text-gray-600 my-10 body-font">
   <div className="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center">
@@ -19,7 +21,7 @@ export default function HeroSection(){
       </p>
       <div className="flex justify-center gap-5">
         <Button variant="outline">Find Doctor You Need</Button>
-       <Link href={'/Doctors/apply'}>
+       <Link href={ session? '/Doctors/apply': '/singin'}>
         <Button>Apply as a doctor</Button>
        </Link>
         

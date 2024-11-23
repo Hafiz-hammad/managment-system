@@ -1,6 +1,8 @@
+import { auth } from "@/auth";
 import DoctorForm from "@/components/applyForm";
 
-export default function ApplyAsDoctor(){
+export default async function ApplyAsDoctor(){
+const session = await auth();
     return(
         <>
         <div className="container mx-auto">
@@ -8,11 +10,15 @@ export default function ApplyAsDoctor(){
 {/* <p className="text-secondary-foreground"> */}
 
     <p className="text-secondary-foreground mt-5">
-Are you a dedicated, qualified medical professional looking to expand your practice and reach more patients? Join our healthcare platform, where we connect experienced doctors like you with individuals in need of exceptional medical care. By joining our network, you’ll have the chance to increase your visibility, manage appointments easily, and grow your patient base through our trusted and user-friendly platform.
+Are you a dedicated, qualified medical professional looking to expand your practice and reach more
+ patients? Join our healthcare platform, where we connect experienced doctors like you with individuals
+  in need of exceptional medical care. By joining our network, you’ll have the chance to increase your 
+  visibility, manage appointments easily, and grow your patient base through our trusted and user-friendly 
+  platform.
     {/* <p/> */}
     </p>
 
-    <DoctorForm/>
+    <DoctorForm session = {session} />
         </div>
         </>
     )

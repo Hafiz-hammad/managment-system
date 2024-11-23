@@ -1,9 +1,11 @@
 "use client"
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
+  
   Form,
   FormControl,
   FormDescription,
@@ -17,27 +19,28 @@ import { DatePicker } from "./datePicker"
 import { Textarea } from "@/components/ui/textarea"
 import React, {useCallback} from 'react'
 import {useDropzone} from 'react-dropzone'
+import { addRequest } from "@/actions/requests"
+import { useToast } from "@/hooks/use-toast"
+
 // import { Select } from "@/components/ui/select"
 
  // Assuming DatePicker component exists
 // 
 const formSchema = z.object({
-  name: z.string().min(2, "Name should be at least 5 characters").max(50, "Name should not exceed 50 characters"),
   bio: z.string().min(2, "Bio should be at least 20 characters").max(120, "Bio should not exceed 120 characters"),
   hospital: z.string().min(2, "Hospital should be at least 5 characters").max(50, "Hospital should not exceed 50 characters"),
-  days: z.array(z.string(), "Please select available days"),
   gender: z.string(),
   appointmentTime: z.date(),
   degree: z.string().min(2, "Degree is required"),
   specialization: z.string().min(2, "Specialization is required"),
   experience: z.string().min(1, "Experience is required"),
-  profileImage: z.string().url("Profile image must be a valid URL"),
   number: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Please enter a valid phone number"),
-  email: z.string().email("Invalid email address"),
+  email: z.string(),
   address: z.string().min(5, "Address should be at least 5 characters"),
 })
 
-export default function DoctorForm() {
+export default function DoctorForm({session }) {
+  const { toast } = useToast()
   const {getRootProps, getInputProps, open} = useDropzone({noClick: true})
 
   const form = useForm({
@@ -46,41 +49,46 @@ export default function DoctorForm() {
       name: "",
       bio: "",
       hospital: "",
-      days: [],
       gender: "",
       appointmentTime: new Date(),
       degree: "",
       specialization: "",
       experience: "",
-      profileImage: "",
       number: "",
       email: "",
       address: "",
     },
   })
 
-  const onSubmit = (values) => {
-    console.log(values)
-}
-
+  async function onSubmit(values)  {
+    values.user = session.user._id;
+    const response = await addRequest(values);
+    console.log("value  Is here==>>> ",values)
+    console.log("Response  Is here==>>> ",response)
+    if (response.error){
+      
+    form.reset();
+    toast({
+      title: "Sorry , your application can no  be submitted",
+      description: response.msg,
+    })}
+    else{
+    
+    form.reset();
+    toast({
+      title: "Your application is submitted.",
+      description: "You will be inform by email in 3 buisnes days.",
+    });
+    
+  
+  };
+     }
 return (
     
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
 <div className="">
-        <div className="grid grid-cols-2 gap-5">
-        <FormField
-          name="name"
-          render={({ field }) => (
-              <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter your name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-          />
+        <div className="grid grid-cols-1 gap-5">
         
         <FormField
           name="bio"
@@ -110,18 +118,6 @@ return (
           )}
           />
 
-        <FormField
-          name="days"
-          render={({ field }) => (
-              <FormItem>
-              <FormLabel>Available Days</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter available days" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-          />
           </div>
 
           <div className="gap-5 grid grid-cols-2">
@@ -240,7 +236,7 @@ return (
           </div>
           </div>
 
-        <Button type="submit">Submit Application</Button>
+        <Button type="submit">Submit</Button>
       </form>
     </Form>
   )
